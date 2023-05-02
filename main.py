@@ -13,7 +13,7 @@ model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Face
 
 
 def get_dataset():
-    data = yf.download('RELIANCE.NS', period='max', auto_adjust=True)
+    data = yf.download('RELIANCE.NS', start="1996-01-01", end="2023-05-01", auto_adjust=True)
     # Split data into training and testing sets
     size = int(len(data.Close) * 0.9)
     train_data = list(data[0:size]['Close'])
