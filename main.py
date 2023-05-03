@@ -73,12 +73,6 @@ if model_name=="ARIMA":
     rmse = np.sqrt(np.square(np.subtract(predictions["actual_data"][-days:], predictions["predictions"][-days:])).mean()).round(2)
     st.write("RMSE: ", rmse)
 
-    predictions['Date'] = pd.to_datetime(predictions['Date'])
-    # Set the 'Date' column as the index
-    predictions = predictions.set_index('Date')
-    st.line_chart(predictions, use_container_width=True)
-    # st.line_chart(data=predictions, y=["actual_data", "predictions"])
-
 elif model_name=="Facebook Prophet":
     st.text("Prophet")
 else:
