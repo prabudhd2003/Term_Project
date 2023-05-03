@@ -50,7 +50,14 @@ if model_name=="ARIMA":
     plt.legend()
     st.pyplot(fig2)
     st.text("RMSE: 41.57")
-
+    
+    st.subheader("Interactive Plot")
+    predictions['Date'] = pd.to_datetime(predictions['Date'])
+    # Set the 'Date' column as the index
+    predictions = predictions.set_index('Date')
+    st.line_chart(predictions, use_container_width=True)
+    # st.line_chart(data=predictions, y=["actual_data", "predictions"])
+    
     days = st.slider(label="Select days", value=14)
     st.subheader(f"ARIMA predictions for last {days} days")
     fig3 = plt.figure(figsize=(20,8), dpi=300)
