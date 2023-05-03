@@ -11,8 +11,9 @@ st.title("Reliance NSE Closing Stock Price Prediction")
 
 model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM"))
 
-
+@st.cache_data
 def get_dataset():
+    # data = yf.download('RELIANCE.NS', period='max', auto_adjust=True)
     data = yf.download('RELIANCE.NS', start="1996-01-01", end="2023-05-01", auto_adjust=True)
     # Split data into training and testing sets
     size = int(len(data.Close) * 0.9)
@@ -21,6 +22,9 @@ def get_dataset():
     return data, train_data, test_data
 
 data, train_data, test_data = get_dataset()
+
+st.subheader('Raw data')
+st.write(data.tail())
 
 st.subheader("Closing Price vs Time chart for entire dataset")
 st.line_chart(data.Close, use_container_width=True)
