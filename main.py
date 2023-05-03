@@ -38,7 +38,7 @@ if model_name=="ARIMA":
     # Loading ARIMA predictions
     predictions = pd.read_csv("./arima_predictions.csv")
 
-    st.subheader("ARIMA predictions mapping Actual Dataset")
+    st.subheader("ARIMA Predictions Mapping Testing Set")
     fig2 = plt.figure(figsize=(20,8), dpi=300)
     date_range = data[int(len(data.Close) * 0.9):].index
     plt.plot(date_range, predictions["actual_data"], color='blue', marker='.', label='Actual')
@@ -81,7 +81,7 @@ else:
     predictions['Date'] = pd.to_datetime(predictions['Date'])
     # Set the 'Date' column as the index
     predictions = predictions.set_index('Date')
-    st.subheader("Stacked LSTM predictions mapping Actual Dataset")
+    st.subheader("Stacked LSTM Predictions Mapping Testing Set")
     fig2 = plt.figure(figsize=(20,8), dpi=300)
     date_range = data[int(len(data.Close) * 0.9):].index
     plt.plot(predictions["close"], color='blue', marker='.', label='Actual')
