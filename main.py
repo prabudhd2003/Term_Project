@@ -57,7 +57,7 @@ if model_name=="ARIMA":
     date_range = data[int(len(data.Close) * 0.9):].index
     plt.plot(date_range[-days:], predictions["actual_data"][-days:], color='blue', marker='.', label='Actual')
     plt.plot(date_range[-days:], predictions["predictions"][-days:], color='red', marker='.', linestyle='--', label='Predictions')
-    plt.title("Reliance NSE stock closing price forecast for last 15 days")
+    # plt.title("Reliance NSE stock closing price forecast for last 15 days")
     plt.xlabel("Date")
     plt.ylabel("Closing Prices (Rs)")
     plt.grid()
