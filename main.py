@@ -33,8 +33,8 @@ st.line_chart(data.Close, use_container_width=True)
 if model_name=="ARIMA":
     st.subheader(model_name)
     # Loading ARIMA model
-    with open('arima_model.pkl', 'rb') as f:
-        arima_model = pickle.load(f)
+    # with open('arima_model.pkl', 'rb') as f:
+    #    arima_model = pickle.load(f)
     # Loading ARIMA predictions
     predictions = pd.read_csv("./arima_predictions.csv")
 
