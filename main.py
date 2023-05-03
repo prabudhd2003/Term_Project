@@ -82,8 +82,8 @@ else:
     st.subheader("Stacked LSTM predictions mapping Actual Dataset")
     fig2 = plt.figure(figsize=(20,8), dpi=300)
     date_range = data[int(len(data.Close) * 0.9):].index
-    plt.plot(date_range, predictions["close"], color='blue', marker='.', label='Actual')
-    plt.plot(date_range, predictions["yhat"], color='red', marker='.', linestyle='--', label='Predictions')
+    plt.plot(predictions["Date"], predictions["close"], color='blue', marker='.', label='Actual')
+    plt.plot(predictions["Date"], predictions["yhat"], color='red', marker='.', linestyle='--', label='Predictions')
     plt.title("Reliance NSE Closing Stock Price Since 1996")
     plt.xlabel("Date")
     plt.ylabel("Closing Prices (Rs)")
