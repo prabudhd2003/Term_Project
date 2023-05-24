@@ -4,33 +4,31 @@ import numpy as np
 import yfinance as yf
 import matplotlib.pyplot as plt
 
-
-
-st.title("Stock Price Prediction App")
+st.title("Stock Price Prediction")
 model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM"))
 data_set = st.selectbox("Select Stock for prediction", ("RELIANCE", "TATA", "SBI", "ICICI", "ADANI"))
 
 def get_dataset():
         if data_set=="RELIANCE":
-            data = yf.download('RELIANCE.NS', period='max', auto_adjust=True)
+            data = yf.download('RELIANCE.NS', end='2023-05-01', auto_adjust=True)
             st.subheader('RELIANCE Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire RELIANCE dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="TATA":
-            data = yf.download('TATASTLLP.NS', period='max', auto_adjust=True)
+            data = yf.download('TATASTLLP.NS', end='2023-05-01', auto_adjust=True)
             st.subheader('TATA STEEL Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire TATA STEEL dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="SBI":
-            data = yf.download('SBIN.NS', period='max', auto_adjust=True)
+            data = yf.download('SBIN.NS', end='2023-05-01', auto_adjust=True)
             st.subheader('SBI Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire SBI dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="ICICI":
-            data = yf.download('ICICIBANK.NS', period='max', auto_adjust=True)
+            data = yf.download('ICICIBANK.NS', end='2023-05-01', auto_adjust=True)
             st.subheader('ICICI Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire ICICI dataset")
@@ -113,7 +111,7 @@ else:
     # Set the 'Date' column as the index
     predictions = predictions.set_index('Date')
     st.subheader("Stacked LSTM Predictions Mapping Testing Set")
-    fig2 = plt.figure(figsize=(20,8), dpi=300)
+    fig2 = plt.figure(figsize=(20, 8), dpi=300)
     date_range = data[int(len(data.Close) * 0.9):].index
     plt.plot(predictions["close"], color='blue', marker='.', label='Actual')
     plt.plot(predictions["yhat"], color='red', marker='.', linestyle='--', label='Predictions')
@@ -123,17 +121,18 @@ else:
     plt.grid()
     plt.legend()
     st.pyplot(fig2)
-    
+
     st.subheader("Interactive Plot")
     st.line_chart(predictions, use_container_width=True)
     # st.line_chart(data=predictions, y=["actual_data", "predictions"])
-    
+
     days = st.slider(label="Select days", value=14)
     st.subheader(f"Stacked LSTM predictions for last {days} days")
-    fig3 = plt.figure(figsize=(20,8), dpi=300)
+    fig3 = plt.figure(figsize=(20, 8), dpi=300)
     date_range = data[int(len(data.Close) * 0.9):].index
     plt.plot(date_range[-days:], predictions["close"][-days:], color='blue', marker='.', label='Actual')
-    plt.plot(date_range[-days:], predictions["yhat"][-days:], color='red', marker='.', linestyle='--', label='Predictions')
+    plt.plot(date_range[-days:], predictions["yhat"][-days:], color='red', marker='.', linestyle='--',
+             label='Predictions')
     # plt.title("Reliance NSE stock closing price forecast for last 15 days")
     plt.xlabel("Date")
     plt.ylabel("Closing Prices (Rs)")
@@ -142,3 +141,4 @@ else:
     st.pyplot(fig3)
     rmse = np.sqrt(np.square(np.subtract(predictions["close"][-days:], predictions["yhat"][-days:])).mean()).round(2)
     st.write("RMSE: ", rmse)
+
