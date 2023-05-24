@@ -99,7 +99,16 @@ elif model_name=="Facebook Prophet":
     st.text("Prophet")
 else:
     st.subheader(model_name)
-    predictions = pd.read_csv("./lstm_preds.csv")
+    if data_set == "RELIANCE":
+        predictions = pd.read_csv("./lstm_preds.csv")
+    elif data_set == "TATA":
+        predictions = pd.read_csv("./lstm_preds_4.csv")
+    elif data_set == "SBI":
+        predictions = pd.read_csv("./lstm_preds_3.csv")
+    elif data_set == "ICICI":
+        predictions = pd.read_csv("./lstm_preds_2.csv")
+    elif data_set == "ADANI":
+        predictions = pd.read_csv("./lstm_preds_5.csv")
     predictions['Date'] = pd.to_datetime(predictions['Date'])
     # Set the 'Date' column as the index
     predictions = predictions.set_index('Date')
