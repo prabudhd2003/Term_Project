@@ -5,8 +5,8 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 
 
-st.title("Reliance NSE Closing Stock Price Prediction")
-st.title("Stock Price Prediction")
+
+st.title("Stock Price Prediction App")
 model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM"))
 data_set = st.selectbox("Select Stock for prediction", ("RELIANCE", "TATA", "SBI", "ICICI", "ADANI"))
 
