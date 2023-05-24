@@ -12,31 +12,31 @@ data_set = st.selectbox("Select Stock for prediction", ("RELIANCE", "TATA", "SBI
 
 def get_dataset():
         if data_set=="RELIANCE":
-            data = yf.download('RELIANCE.NS',  end='2023-05-01', auto_adjust=True)
+            data = yf.download('RELIANCE.NS', period='max', auto_adjust=True)
             st.subheader('RELIANCE Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire RELIANCE dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="TATA":
-            data = yf.download('TATASTLLP.NS', end='2023-05-01', auto_adjust=True)
+            data = yf.download('TATASTLLP.NS', period='max', auto_adjust=True)
             st.subheader('TATA STEEL Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire TATA STEEL dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="SBI":
-            data = yf.download('SBIN.NS', end='2023-05-01', auto_adjust=True)
+            data = yf.download('SBIN.NS', period='max', auto_adjust=True)
             st.subheader('SBI Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire SBI dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="ICICI":
-            data = yf.download('ICICIBANK.NS', end='2023-05-01', auto_adjust=True)
+            data = yf.download('ICICIBANK.NS', period='max', auto_adjust=True)
             st.subheader('ICICI Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire ICICI dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="ADANI":
-            data = yf.download('ADANIENT.NS', end='2023-05-01', auto_adjust=True)
+            data = yf.download('ADANIENT.NS', period='max', auto_adjust=True)
             st.subheader('ADANI Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire ADANI dataset")
