@@ -34,7 +34,7 @@ def get_dataset():
             st.subheader("Closing Price vs Time chart for entire ICICI dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="ADANI":
-            data = yf.download('ADANIENT.NS', period='max', auto_adjust=True)
+            data = yf.download('ADANIENT.NS', end='2023-05-01', auto_adjust=True)
             st.subheader('ADANI Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire ADANI dataset")
