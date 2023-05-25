@@ -5,7 +5,7 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 
 st.title("Stock Price Prediction")
-model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM"))
+model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM", "All Models"))
 data_set = st.selectbox("Select Stock for prediction", ("RELIANCE", "TATA", "SBI", "ICICI", "ADANI"))
 
 def get_dataset():
@@ -96,7 +96,7 @@ if model_name=="ARIMA":
 
 elif model_name=="Facebook Prophet":
     st.text("Prophet")
-else:
+elif model_name=="Stacked LSTM":
     st.subheader(model_name)
     if data_set == "RELIANCE":
         predictions = pd.read_csv("./lstm_preds.csv")
@@ -142,4 +142,41 @@ else:
     st.pyplot(fig3)
     rmse = np.sqrt(np.square(np.subtract(predictions["close"][-days:], predictions["yhat"][-days:])).mean()).round(2)
     st.write("RMSE: ", rmse)
+else:
+    if data_set == "RELIANCE":
+        predictions_arima = pd.read_csv("./arima_predictions_reliance.csv")
+        predictions_lstm = pd.read_csv("./lstm_preds.csv")
+    elif data_set == "TATA":
+        predictions_arima = pd.read_csv("./arima_predictions_tata.csv")
+        predictions_lstm = pd.read_csv("./lstm_preds_4.csv")
+    elif data_set == "SBI":
+        predictions_arima = pd.read_csv("./arima_predictions_sbi.csv")
+        predictions_lstm = pd.read_csv("./lstm_preds_3.csv")
+    elif data_set == "ICICI":
+        predictions_arima = pd.read_csv("./arima_predictions_icici.csv")
+        predictions_lstm = pd.read_csv("./lstm_preds_2.csv")
+    elif data_set == "ADANI":
+        predictions_arima = pd.read_csv("./arima_predictions_adani.csv")
+        predictions_lstm = pd.read_csv("./lstm_preds_5.csv")
 
+    days = st.slider(label="Select days", value=14)
+    st.subheader(f"Predictions for last {days} days")
+    fig3 = plt.figure(figsize=(20, 8), dpi=300)
+    date_range = data[int(len(data.Close) * 0.9):].index
+    plt.plot(date_range[-days:], predictions_arima["actual_data"][-days:], color='blue', marker='.', label='Actual Data')
+    plt.plot(date_range[-days:], predictions_arima["predictions"][-days:], color='red', marker='.', linestyle='--',
+             label='ARIMA Predictions')
+    plt.plot(date_range[-days:], predictions_lstm["yhat"][-days:], color='green', marker='.', linestyle='--',
+             label='LSTM Predictions')
+    # plt.title("Reliance NSE stock closing price forecast for last 15 days")
+    plt.xlabel("Date")
+    plt.ylabel("Closing Prices (Rs)")
+    plt.grid()
+    plt.legend()
+    st.pyplot(fig3)
+    rmse_arima = np.sqrt(
+        np.square(np.subtract(predictions_arima["actual_data"][-days:], predictions_arima["predictions"][-days:])).mean()).round(2)
+    rmse_lstm = np.sqrt(np.square(np.subtract(predictions_lstm["close"][-days:], predictions_lstm["yhat"][-days:])).mean()).round(2)
+
+    st.write("RMSE ARIMA: ", rmse_arima)
+    st.write("RMSE LSTM:", rmse_lstm)
