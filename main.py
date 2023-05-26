@@ -3,7 +3,6 @@ import streamlit as st
 import numpy as np
 import yfinance as yf
 import matplotlib.pyplot as plt
-from prophet.plot import plot_plotly, plot_components_plotly
 from prophet.serialize import model_from_json
 from sklearn.metrics import mean_squared_error
 
@@ -134,8 +133,59 @@ elif model_name=="Facebook Prophet":
     st.write(fig1)
     st.write("RMSE for entire dataset: ", np.sqrt(mean_squared_error(forecast.yhat[:-15], df.y)))
     st.subheader("Prophet model Components")
-    fig2 = plot_components_plotly(m, forecast)
-    st.write(fig2)
+
+
+    def plot_components_plotly(m, forecast):
+        # Extract the components from the forecast object
+        trend = forecast.trend
+        # seasonal = forecast.seasonal
+        # residual = forecast.residuals
+
+        # Create the x-axis values for plotting
+        x = np.arange(len(trend))  # Use the length of any component
+
+        # Create the trend plot
+        plt.plot(x, trend, label='Trend')
+
+        # Create the seasonal plot
+        # plt.plot(x, seasonal, label='Seasonal')
+
+        # Create the residual plot
+        # plt.plot(x, residual, label='Residual')
+
+        # Set the plot title and labels
+        plt.title('Decomposition Components')
+        plt.xlabel('Time')
+        plt.ylabel('Value')
+
+        # Show the legend
+        plt.legend()
+
+        # Get the figure and axes
+        fig, ax = plt.subplots()
+
+        # Plot the data on the axes
+        ax.plot(x, trend, label='Trend')
+        # ax.plot(x, seasonal, label='Seasonal')
+        # ax.plot(x, residual, label='Residual')
+
+        # Set the plot title and labels
+        ax.set_title('Decomposition Components')
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Value')
+
+        # Show the legend
+        ax.legend()
+
+        # Display the plot in Streamlit
+        st.pyplot(fig)
+
+
+    # Assuming you have a Prophet model object named 'model' and a forecast object named 'forecast'
+    mod = m.history['y']
+    forecast = m.predict(m.make_future_dataframe(periods=10))
+
+    plot_components_plotly(mod, forecast)
 
 elif model_name=="Stacked LSTM":
     st.subheader(model_name)
