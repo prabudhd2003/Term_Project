@@ -9,8 +9,8 @@ import plotly.graph_objects as go
 import calendar
 
 st.title("Stock Price Prediction")
+data_set = st.sidebar.selectbox("Select Stock for prediction", ("RELIANCE", "TATA", "SBI", "ICICI", "ADANI"))
 model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM", "All Models"))
-data_set = st.selectbox("Select Stock for prediction", ("RELIANCE", "TATA", "SBI", "ICICI", "ADANI"))
 
 def get_dataset():
         if data_set=="RELIANCE":
