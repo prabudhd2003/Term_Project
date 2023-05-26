@@ -144,7 +144,7 @@ elif model_name=="Facebook Prophet":
 
         # Create the x-axis values for plotting
         x_weekly = np.arange(7)  # Days of the week (0-6)
-        x_yearly = np.arange(13)  # Months of the year (0-11)
+        x_yearly = np.arange(12)  # Months of the year (0-11)
         # x = np.arange(len(trend))
         x = forecast.ds
         # Create the trend plot
