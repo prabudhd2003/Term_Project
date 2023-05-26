@@ -5,6 +5,8 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 from prophet.serialize import model_from_json
 from sklearn.metrics import mean_squared_error
+import plotly.graph_objects as go
+import calendar
 
 st.title("Stock Price Prediction")
 model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM", "All Models"))
@@ -134,51 +136,46 @@ elif model_name=="Facebook Prophet":
     st.write("RMSE for entire dataset: ", np.sqrt(mean_squared_error(forecast.yhat[:-15], df.y)))
     st.subheader("Prophet model Components")
 
-
     def plot_components_plotly(m, forecast):
         # Extract the components from the forecast object
         trend = forecast.trend
-        # seasonal = forecast.seasonal
-        # residual = forecast.residuals
+        weekly = forecast.weekly
+        yearly = forecast.yearly
 
         # Create the x-axis values for plotting
-        x = np.arange(len(trend))  # Use the length of any component
-
+        x_weekly = np.arange(7)  # Days of the week (0-6)
+        x_yearly = np.arange(12)  # Months of the year (0-11)
+        # x = np.arange(len(trend))
+        x = forecast.ds
         # Create the trend plot
-        plt.plot(x, trend, label='Trend')
+        fig_trend = go.Figure(data=go.Scatter(x=x, y=trend, mode='lines', name='Trend'))
 
-        # Create the seasonal plot
-        # plt.plot(x, seasonal, label='Seasonal')
+        # Create the yearly plot
+        fig_yearly = go.Figure(data=go.Scatter(x=x_yearly, y=yearly, mode='lines', name='Yearly'))
 
-        # Create the residual plot
-        # plt.plot(x, residual, label='Residual')
+        # Create the weekly plot with adjusted y-axis scale
+        fig_weekly = go.Figure(data=go.Scatter(x=x_weekly, y=weekly, mode='lines', name='Weekly'))
 
-        # Set the plot title and labels
-        plt.title('Decomposition Components')
-        plt.xlabel('Time')
-        plt.ylabel('Value')
+        # Adjust y-axis scale
+        max_val = max(abs(max(weekly)), abs(min(weekly)))
+        fig_weekly.update_layout(yaxis=dict(range=[-max_val, max_val]))
 
-        # Show the legend
-        plt.legend()
+        # Set the x-axis labels for weekly component
+        fig_weekly.update_layout(xaxis=dict(tickmode='array', tickvals=x_weekly, ticktext=list(calendar.day_name)))
 
-        # Get the figure and axes
-        fig, ax = plt.subplots()
+        # Set the x-axis labels for yearly component
+        fig_yearly.update_layout(
+            xaxis=dict(tickmode='array', tickvals=x_yearly, ticktext=list(calendar.month_name)[1:]))
 
-        # Plot the data on the axes
-        ax.plot(x, trend, label='Trend')
-        # ax.plot(x, seasonal, label='Seasonal')
-        # ax.plot(x, residual, label='Residual')
+        # Set the plot titles and labels
+        fig_trend.update_layout(title='Trend Component', xaxis_title='Years', yaxis_title='Value')
+        fig_yearly.update_layout(title='Yearly Component', xaxis_title='Months', yaxis_title='Value')
+        fig_weekly.update_layout(title='Weekly Component', xaxis_title='Days', yaxis_title='Value')
 
-        # Set the plot title and labels
-        ax.set_title('Decomposition Components')
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Value')
-
-        # Show the legend
-        ax.legend()
-
-        # Display the plot in Streamlit
-        st.pyplot(fig)
+        # Display the plots in Streamlit
+        st.plotly_chart(fig_trend)
+        st.plotly_chart(fig_yearly)
+        st.plotly_chart(fig_weekly)
 
 
     # Assuming you have a Prophet model object named 'model' and a forecast object named 'forecast'
