@@ -157,8 +157,8 @@ elif model_name=="Facebook Prophet":
         fig_weekly = go.Figure(data=go.Scatter(x=x_weekly, y=weekly, mode='lines', name='Weekly'))
 
         # Adjust y-axis scale
-        max_val = max(abs(max(weekly)), abs(min(weekly)))
-        fig_weekly.update_layout(yaxis=dict(range=[-max_val, max_val]))
+        # max_val = max(abs(max(weekly)), abs(min(weekly)))
+        # fig_weekly.update_layout(yaxis=dict(range=[-max_val, max_val]))
 
         # Set the x-axis labels for weekly component
         fig_weekly.update_layout(xaxis=dict(tickmode='array', tickvals=x_weekly, ticktext=list(calendar.day_name)))
@@ -234,25 +234,75 @@ else:
     if data_set == "RELIANCE":
         predictions_arima = pd.read_csv("./arima_predictions_reliance.csv")
         predictions_lstm = pd.read_csv("./lstm_preds.csv")
+        forecast = pd.read_csv("./prophet_reliance_forcast.csv")
+        df = pd.read_csv("./prophet_reliance_df.csv")
+        with open('reliance_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
     elif data_set == "TATA":
         predictions_arima = pd.read_csv("./arima_predictions_tata.csv")
         predictions_lstm = pd.read_csv("./lstm_preds_4.csv")
+        forecast = pd.read_csv("./prophet_tata_forcast.csv")
+        df = pd.read_csv("./prophet_tata_df.csv")
+        with open('tata_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
     elif data_set == "SBI":
         predictions_arima = pd.read_csv("./arima_predictions_sbi.csv")
         predictions_lstm = pd.read_csv("./lstm_preds_3.csv")
+        forecast = pd.read_csv("./prophet_sbi_forcast.csv")
+        df = pd.read_csv("./prophet_sbi_df.csv")
+        with open('sbi_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
     elif data_set == "ICICI":
         predictions_arima = pd.read_csv("./arima_predictions_icici.csv")
         predictions_lstm = pd.read_csv("./lstm_preds_2.csv")
+        forecast = pd.read_csv("./prophet_icici_forcast.csv")
+        df = pd.read_csv("./prophet_icici_df.csv")
+        with open('icici_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
     elif data_set == "ADANI":
         predictions_arima = pd.read_csv("./arima_predictions_adani.csv")
         predictions_lstm = pd.read_csv("./lstm_preds_5.csv")
+        forecast = pd.read_csv("./prophet_adani_forcast.csv")
+        df = pd.read_csv("./prophet_adani_df.csv")
+        with open('adani_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
+
+    st.header("Models Mapping Entire Dataset")
+    predictions_arima['Date'] = pd.to_datetime(predictions_arima['Date'])
+
+    predictions_arima.loc[102:, 'LSTM_prediction'] = predictions_lstm["yhat"].values
+    size = len(predictions_arima)
+    predictions_arima["Prophet_predictions"] = forecast['yhat'][-size:].values
+    predictions_arima.rename(columns={'predictions': 'ARIMA_predictions'}, inplace=True)
+    predictions = predictions_arima.set_index('Date')
+    predictions.rename(columns={'actual_data': 'Actual_data'}, inplace=True)
+    st.line_chart(predictions[["Actual_data", "ARIMA_predictions", "LSTM_prediction", "Prophet_predictions"]], use_container_width=True)
+    
+    forecast['ds'] = pd.to_datetime(forecast['ds'])
+    st.subheader("Prophet model mapping entire dataset")
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Prophet_prediction'))
+    fig.add_trace(go.Scatter(x=forecast['ds'], y=df['y'], mode='lines', name='Actual_Data'))
+
+    st.plotly_chart(fig)
+    
+    st.subheader("RMSE for entire dataset")
+    rmse_arima = np.sqrt(
+        np.square(np.subtract(predictions_arima["actual_data"], predictions_arima["ARIMA_predictions"])).mean()).round(2)
+    rmse_lstm = np.sqrt(np.square(np.subtract(predictions_lstm["close"], predictions_lstm["yhat"])).mean()).round(2)
+    yhat = forecast.yhat[:-15]
+    rmse_prophet = np.sqrt(mean_squared_error(yhat, df.y)).round(2)
+    st.write("RMSE ARIMA: ", rmse_arima)
+    st.write("RMSE LSTM:", rmse_lstm)
+    st.write("RMSE PROPHET:", rmse_prophet)
+
 
     days = st.slider(label="Select days", value=14)
     st.subheader(f"Predictions for last {days} days")
     fig3 = plt.figure(figsize=(20, 8), dpi=300)
     date_range = data[int(len(data.Close) * 0.9):].index
     plt.plot(date_range[-days:], predictions_arima["actual_data"][-days:], color='blue', marker='.', label='Actual Data')
-    plt.plot(date_range[-days:], predictions_arima["predictions"][-days:], color='red', marker='.', linestyle='--',
+    plt.plot(date_range[-days:], predictions_arima["ARIMA_predictions"][-days:], color='red', marker='.', linestyle='--',
              label='ARIMA Predictions')
     plt.plot(date_range[-days:], predictions_lstm["yhat"][-days:], color='green', marker='.', linestyle='--',
              label='LSTM Predictions')
@@ -263,8 +313,10 @@ else:
     plt.legend()
     st.pyplot(fig3)
     rmse_arima = np.sqrt(
-        np.square(np.subtract(predictions_arima["actual_data"][-days:], predictions_arima["predictions"][-days:])).mean()).round(2)
+        np.square(np.subtract(predictions_arima["actual_data"][-days:], predictions_arima["ARIMA_predictions"][-days:])).mean()).round(2)
     rmse_lstm = np.sqrt(np.square(np.subtract(predictions_lstm["close"][-days:], predictions_lstm["yhat"][-days:])).mean()).round(2)
-
+    yhat = forecast.yhat[:-15]
+    rmse_prophet = np.sqrt(mean_squared_error(yhat[-days:], df.y[-days:])).round(2)
     st.write("RMSE ARIMA: ", rmse_arima)
     st.write("RMSE LSTM:", rmse_lstm)
+    st.write("RMSE PROPHET:", rmse_prophet)
