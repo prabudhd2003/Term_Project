@@ -69,4 +69,3 @@ zipp==3.15.0
 prophet==1.0.1
 plotly==5.1.0
 scikit-learn==0.24.2
-holidays==0.11.3  # Update to a compatible version
