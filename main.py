@@ -3,6 +3,9 @@ import streamlit as st
 import numpy as np
 import yfinance as yf
 import matplotlib.pyplot as plt
+from prophet.plot import plot_plotly, plot_components_plotly
+from prophet.serialize import model_from_json
+from sklearn.metrics import mean_squared_error
 
 st.title("Stock Price Prediction")
 model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM", "All Models"))
@@ -95,7 +98,45 @@ if model_name=="ARIMA":
     st.line_chart(predictions[["actual_data", "predictions"]], use_container_width=True)
 
 elif model_name=="Facebook Prophet":
-    st.text("Prophet")
+    st.subheader(model_name)
+    if data_set == "RELIANCE":
+        forecast = pd.read_csv("./prophet_reliance_forcast.csv")
+        df = pd.read_csv("./prophet_reliance_df.csv")
+        with open('reliance_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
+    elif data_set == "TATA":
+        forecast = pd.read_csv("./prophet_tata_forcast.csv")
+        df = pd.read_csv("./prophet_tata_df.csv")
+        with open('tata_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
+    elif data_set == "SBI":
+        forecast = pd.read_csv("./prophet_sbi_forcast.csv")
+        df = pd.read_csv("./prophet_sbi_df.csv")
+        with open('sbi_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
+    elif data_set == "ICICI":
+        forecast = pd.read_csv("./prophet_icici_forcast.csv")
+        df = pd.read_csv("./prophet_icici_df.csv")
+        with open('icici_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
+    elif data_set == "ADANI":
+        forecast = pd.read_csv("./prophet_adani_forcast.csv")
+        df = pd.read_csv("./prophet_adani_df.csv")
+        with open('adani_model.json', 'r') as fin:
+            m = model_from_json(fin.read())  # Load model
+
+    st.subheader(data_set)
+    forecast = forecast.drop("Unnamed: 0", axis=1)
+    st.write(forecast.head())
+    forecast['ds'] = pd.to_datetime(forecast['ds'])
+    st.subheader("Prophet model mapping entire dataset")
+    fig1 = m.plot(forecast)
+    st.write(fig1)
+    st.write("RMSE for entire dataset: ", np.sqrt(mean_squared_error(forecast.yhat[:-15], df.y)))
+    st.subheader("Prophet model Components")
+    fig2 = plot_components_plotly(m, forecast)
+    st.write(fig2)
+
 elif model_name=="Stacked LSTM":
     st.subheader(model_name)
     if data_set == "RELIANCE":
