@@ -1,4 +1,4 @@
-﻿alabaster==0.7.13
+alabaster==0.7.13
 altair==4.2.2
 appdirs==1.4.4
 attrs==23.1.0
@@ -66,6 +66,7 @@ watchdog==3.0.0
 webencodings==0.5.1
 yfinance==0.2.18
 zipp==3.15.0
-prophet
+prophet==1.0.1
 plotly==5.1.0
 scikit-learn==0.24.2
+
