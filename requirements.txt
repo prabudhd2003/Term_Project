@@ -66,6 +66,6 @@ watchdog==3.0.0
 webencodings==0.5.1
 yfinance==0.2.18
 zipp==3.15.0
-prophet==1.0.1
+prophet
 plotly==5.1.0
 scikit-learn==0.24.2
