@@ -157,8 +157,8 @@ elif model_name=="Facebook Prophet":
         fig_weekly = go.Figure(data=go.Scatter(x=x_weekly, y=weekly, mode='lines', name='Weekly'))
 
         # Adjust y-axis scale
-        max_val = max(abs(max(weekly)), abs(min(weekly)))
-        fig_weekly.update_layout(yaxis=dict(range=[-max_val, max_val]))
+        # max_val = max(abs(max(weekly)), abs(min(weekly)))
+        # fig_weekly.update_layout(yaxis=dict(range=[-max_val, max_val]))
 
         # Set the x-axis labels for weekly component
         fig_weekly.update_layout(xaxis=dict(tickmode='array', tickvals=x_weekly, ticktext=list(calendar.day_name)))
