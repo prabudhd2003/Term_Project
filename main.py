@@ -65,7 +65,7 @@ if model_name=="ARIMA":
         predictions = pd.read_csv("./arima_predictions_adani.csv")
 
     # plt.title("Reliance NSE Closing Stock Price Since 1996")
-    st.subheader("ARIMA predictions mapping Actual Dataset")
+    st.subheader("ARIMA Predictions Mapping Test Set")
     fig2 = plt.figure(figsize=(20, 8), dpi=300)
     date_range = data[int(len(data.Close) * 0.9):].index
     plt.plot(date_range, predictions["actual_data"], color='blue', marker='.', label='Actual')
@@ -75,8 +75,11 @@ if model_name=="ARIMA":
     plt.grid()
     plt.legend()
     st.pyplot(fig2)
-    rmse_1 = np.sqrt(np.square(np.subtract(predictions["actual_data"], predictions["predictions"])).mean()).round(2)
-    st.write("RMSE: ", rmse_1)
+    
+    # rmse_1 = np.sqrt(np.square(np.subtract(predictions["actual_data"], predictions["predictions"])).mean()).round(2)
+    rmse_test = np.sqrt(np.square(np.subtract(predictions["actual_data"], predictions["predictions"])).mean()).round(2)
+    # st.write("RMSE  for entire data set: ", rmse_1)
+    st.write("RMSE  for test set: ", rmse_test)
 
     days = st.slider(label="Select days", value=14)
     st.subheader(f"ARIMA predictions for last {days} days")
@@ -133,7 +136,9 @@ elif model_name=="Facebook Prophet":
     st.subheader("Prophet model mapping entire dataset")
     fig1 = m.plot(forecast)
     st.write(fig1)
-    st.write("RMSE for entire dataset: ", np.sqrt(mean_squared_error(forecast.yhat[:-15], df.y)))
+
+    # st.write("RMSE for entire dataset: ", np.sqrt(mean_squared_error(forecast.yhat[:-15], df.y)).round(2))
+    st.write("RMSE for testset: ", np.sqrt(mean_squared_error(forecast.yhat[:-15], df.y)).round(2))
     st.subheader("Prophet model Components")
 
     def plot_components_plotly(m, forecast):
@@ -267,7 +272,7 @@ else:
         with open('adani_model.json', 'r') as fin:
             m = model_from_json(fin.read())  # Load model
 
-    st.header("Models Mapping Entire Dataset")
+    st.header("Models Mapping Test Set")
     predictions_arima['Date'] = pd.to_datetime(predictions_arima['Date'])
 
     predictions_arima.loc[102:, 'LSTM_prediction'] = predictions_lstm["yhat"].values
@@ -286,7 +291,8 @@ else:
 
     st.plotly_chart(fig)
     
-    st.subheader("RMSE for entire dataset")
+    st.subheader("RMSE for entire test set")
+    
     rmse_arima = np.sqrt(
         np.square(np.subtract(predictions_arima["actual_data"], predictions_arima["ARIMA_predictions"])).mean()).round(2)
     rmse_lstm = np.sqrt(np.square(np.subtract(predictions_lstm["close"], predictions_lstm["yhat"])).mean()).round(2)
@@ -304,6 +310,7 @@ else:
     plt.plot(date_range[-days:], predictions_arima["actual_data"][-days:], color='blue', marker='.', label='Actual Data')
     plt.plot(date_range[-days:], predictions_arima["ARIMA_predictions"][-days:], color='red', marker='.', linestyle='--',
              label='ARIMA Predictions')
+    date_range = date_range[102:]
     plt.plot(date_range[-days:], predictions_lstm["yhat"][-days:], color='green', marker='.', linestyle='--',
              label='LSTM Predictions')
     # plt.title("Reliance NSE stock closing price forecast for last 15 days")
@@ -312,6 +319,7 @@ else:
     plt.grid()
     plt.legend()
     st.pyplot(fig3)
+
     rmse_arima = np.sqrt(
         np.square(np.subtract(predictions_arima["actual_data"][-days:], predictions_arima["ARIMA_predictions"][-days:])).mean()).round(2)
     rmse_lstm = np.sqrt(np.square(np.subtract(predictions_lstm["close"][-days:], predictions_lstm["yhat"][-days:])).mean()).round(2)
