@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 import calendar
 
 st.title("Stock Price Prediction")
-data_set = st.sidebar.selectbox("Select Stock for prediction", ("RELIANCE", "TATA", "SBI", "ICICI", "ADANI"))
+data_set = st.sidebar.selectbox("Select Stock for prediction", ("RELIANCE", "TATA", "ICICI", "ADANI"))
 model_name = st.sidebar.selectbox("Select Model for prediction", ("ARIMA", "Facebook Prophet", "Stacked LSTM", "All Models"))
 
 def get_dataset():
@@ -24,12 +24,6 @@ def get_dataset():
             st.subheader('TATA STEEL Raw Data')
             st.write(data.tail())
             st.subheader("Closing Price vs Time chart for entire TATA STEEL dataset")
-            st.line_chart(data.Close, use_container_width=True)
-        elif data_set=="SBI":
-            data = yf.download('SBIN.NS', end='2023-05-01', auto_adjust=True)
-            st.subheader('SBI Raw Data')
-            st.write(data.tail())
-            st.subheader("Closing Price vs Time chart for entire SBI dataset")
             st.line_chart(data.Close, use_container_width=True)
         elif data_set=="ICICI":
             data = yf.download('ICICIBANK.NS', end='2023-05-01', auto_adjust=True)
@@ -57,8 +51,6 @@ if model_name=="ARIMA":
         predictions = pd.read_csv("./arima_predictions_reliance.csv")
     elif data_set == "TATA":
         predictions = pd.read_csv("./arima_predictions_tata.csv")
-    elif data_set == "SBI":
-        predictions = pd.read_csv("./arima_predictions_sbi.csv")
     elif data_set == "ICICI":
         predictions = pd.read_csv("./arima_predictions_icici.csv")
     elif data_set == "ADANI":
@@ -87,7 +79,6 @@ if model_name=="ARIMA":
     date_range = data[int(len(data.Close) * 0.9):].index
     plt.plot(date_range[-days:], predictions["actual_data"][-days:], color='blue', marker='.', label='Actual')
     plt.plot(date_range[-days:], predictions["predictions"][-days:], color='red', marker='.', linestyle='--', label='Predictions')
-    # plt.title("Reliance NSE stock closing price forecast for last 15 days")
     plt.xlabel("Date")
     plt.ylabel("Closing Prices (Rs)")
     plt.grid()
@@ -195,8 +186,6 @@ elif model_name=="Stacked LSTM":
         predictions = pd.read_csv("./lstm_preds.csv")
     elif data_set == "TATA":
         predictions = pd.read_csv("./lstm_preds_4.csv")
-    elif data_set == "SBI":
-        predictions = pd.read_csv("./lstm_preds_3.csv")
     elif data_set == "ICICI":
         predictions = pd.read_csv("./lstm_preds_2.csv")
     elif data_set == "ADANI":
@@ -218,7 +207,6 @@ elif model_name=="Stacked LSTM":
 
     st.subheader("Interactive Plot")
     st.line_chart(predictions, use_container_width=True)
-    # st.line_chart(data=predictions, y=["actual_data", "predictions"])
 
     days = st.slider(label="Select days", value=14)
     st.subheader(f"Stacked LSTM predictions for last {days} days")
@@ -227,7 +215,6 @@ elif model_name=="Stacked LSTM":
     plt.plot(date_range[-days:], predictions["close"][-days:], color='blue', marker='.', label='Actual')
     plt.plot(date_range[-days:], predictions["yhat"][-days:], color='red', marker='.', linestyle='--',
              label='Predictions')
-    # plt.title("Reliance NSE stock closing price forecast for last 15 days")
     plt.xlabel("Date")
     plt.ylabel("Closing Prices (Rs)")
     plt.grid()
@@ -249,13 +236,6 @@ else:
         forecast = pd.read_csv("./prophet_tata_forcast.csv")
         df = pd.read_csv("./prophet_tata_df.csv")
         with open('tata_model.json', 'r') as fin:
-            m = model_from_json(fin.read())  # Load model
-    elif data_set == "SBI":
-        predictions_arima = pd.read_csv("./arima_predictions_sbi.csv")
-        predictions_lstm = pd.read_csv("./lstm_preds_3.csv")
-        forecast = pd.read_csv("./prophet_sbi_forcast.csv")
-        df = pd.read_csv("./prophet_sbi_df.csv")
-        with open('sbi_model.json', 'r') as fin:
             m = model_from_json(fin.read())  # Load model
     elif data_set == "ICICI":
         predictions_arima = pd.read_csv("./arima_predictions_icici.csv")
