@@ -281,7 +281,9 @@ else:
     st.write("RMSE ARIMA: ", rmse_arima)
     st.write("RMSE LSTM:", rmse_lstm)
     st.write("RMSE PROPHET:", rmse_prophet)
-
+    std_dev = np.std(df.y)
+    std_dev = round(std_dev, 2)
+    st.write("Standard Devation:", std_dev)
 
     days = st.slider(label="Select days", value=14)
     st.subheader(f"Predictions for last {days} days")
@@ -308,3 +310,6 @@ else:
     st.write("RMSE ARIMA: ", rmse_arima)
     st.write("RMSE LSTM:", rmse_lstm)
     st.write("RMSE PROPHET:", rmse_prophet)
+    std_dev = np.std(df.y[-days:])
+    std_dev = round(std_dev, 2)
+    st.write("Standard Devation:", std_dev)
